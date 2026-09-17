@@ -28,6 +28,8 @@
 
   *{ box-sizing: border-box; }
 
+  html{ -webkit-text-size-adjust: 100%; }
+
   body{
     margin:0;
     background:
@@ -37,7 +39,8 @@
     background-attachment: fixed;
     font-family: 'Space Grotesk', sans-serif;
     color: var(--ink);
-    padding: 28px 24px 60px;
+    padding: clamp(12px, 4vw, 28px) clamp(10px, 3vw, 24px) 60px;
+    overflow-x: hidden;
   }
 
   .sheet{
@@ -66,7 +69,7 @@
   }
   .titleblock h1{
     margin: 0;
-    font-size: 34px;
+    font-size: clamp(21px, 5vw, 34px);
     font-weight: 700;
     letter-spacing: -0.01em;
   }
@@ -206,6 +209,7 @@
     font-weight: 600;
     color: var(--ink-soft);
   }
+  .daynum .dow{ display: none; }
   .cell.today .daynum{
     color: #fff;
     background: var(--steel);
@@ -244,14 +248,59 @@
     margin-top: 18px;
   }
 
+  @media (max-width: 900px){
+    .cell{ min-height: 96px; }
+    .event{ font-size: 10.5px; }
+  }
+
   @media (max-width: 720px){
     .titleblock{ grid-template-columns: 1fr; }
     .titleblock .main{ border-right:none; border-bottom: 1.5px solid var(--ink); }
-    .titleblock h1{ font-size: 24px; }
     .cell{ min-height: 84px; }
-    .event{ font-size: 10.5px; }
     .weekdays div{ font-size: 9px; padding: 6px 3px; }
     .tab{ font-size: 11px; padding: 10px 0; }
+  }
+
+  /* ---- Narrow / phone: switch grid to a single-column agenda list ---- */
+  @media (max-width: 620px){
+    .legend{ padding: 12px 14px; gap: 8px 14px; }
+    .legend .chip{ font-size: 12px; }
+
+    .weekdays{ display: none; }
+
+    .grid{
+      display: block;
+      border: 1.5px solid var(--ink);
+    }
+    .grid .cell{
+      display: none;
+      min-height: 0;
+      border-right: none;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 10px 12px;
+      gap: 6px 10px;
+    }
+    .grid .cell.blank{ display: none !important; }
+    .grid .cell.has-events{ display: flex; }
+    .grid .cell.has-events .daynum{
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--paper);
+    }
+    .daynum .dow{
+      display: inline;
+      color: var(--steel-dim);
+      font-weight: 500;
+    }
+    .cell.today .daynum{ padding: 2px 8px; width: auto; height: auto; border-radius: 4px; }
+    .event{ font-size: 12px; padding: 4px 8px 4px 9px; }
   }
 </style>
 </head>
@@ -390,8 +439,12 @@ function buildMonth(m, idx){
   for(let d=1; d<=daysInMonth; d++){
     const evs = eventsFor(year, month, d);
     const isToday = isCurrentMonth && today.getDate()===d;
+    const dow = new Date(year, month, d).getDay();
     let evHtml = evs.map(e=>`<div class="event cat-${e.cat}">${e.title}</div>`).join("");
-    cells += `<div class="cell${isToday? " today":""}"><div class="daynum">${d}</div>${evHtml}</div>`;
+    const classes = ["cell"];
+    if(isToday) classes.push("today");
+    if(evs.length) classes.push("has-events");
+    cells += `<div class="${classes.join(" ")}"><div class="daynum"><span class="dow">${WEEKDAY_LABELS[dow]}</span>${d}</div>${evHtml}</div>`;
   }
   const totalCells = firstDay + daysInMonth;
   const trailing = (7 - (totalCells % 7)) % 7;
