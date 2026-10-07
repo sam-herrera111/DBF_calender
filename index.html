@@ -316,7 +316,7 @@
     </div>
     <div class="meta">
       <div><span>PERIOD</span><b>SEP – NOV 2026</b></div>
-      <div><span>REV.</span><b>B — synced from whiteboard photos</b></div>
+      <div><span>REV.</span><b></b></div>
     </div>
   </div>
 
@@ -328,7 +328,6 @@
 
 </div>
 
-<footer>Edit the EVENTS array in the page source to update dates, titles, or categories.</footer>
 
 <script>
 /* ============================================================
@@ -342,71 +341,78 @@ const EVENTS = [
   // ---- September ----
   { date:"2026-09-04", cat:"everyone",      title:"Rotational Meeting!" },
   { date:"2026-09-05", cat:"manufacturing", title:"Print + Build VS & HS for SAE" },
-  { date:"2026-09-05", cat:"everyone",    title:"Wing Connector — Buy List" },
-  { date:"2026-09-12", cat:"manufacturing",    title:"SDS" },
+  { date:"2026-09-05", cat:"everyone",      title:"Wing Connector — Buy List" },
+  { date:"2026-09-12", cat:"manufacturing", title:"SDS" },
   { date:"2026-09-12", cat:"aero",          title:"Drag Articles / CFD" },
   { date:"2026-09-15", cat:"everyone",      title:"Alec Bday" },
   { date:"2026-09-16", cat:"everyone",      title:"SAE Lottery" },
   { date:"2026-09-18", cat:"aero",          title:"Begin SAE XFLR5 (Airfoils)" },
   { date:"2026-09-19", cat:"avionics",      title:"Begin Summer Plane Avionics" },
-  { date:"2026-09-21", cat:"structures", title:"Finish Wings (SP)" },
-  { date:"2026-09-25", cat:"manufacturing", title:"Finish HT/VT (SP)" },
+  { date:"2026-09-21", cat:"structures",    title:"Finish Wings (SP)" },
   { date:"2026-09-23", cat:"propulsion",    title:"Test Motor + Propeller (Summer Plane)" },
-  { date:"2026-09-26", cat:"manufacturing", title:"Finish Building Wings (SP)" },
+  { date:"2026-09-25", cat:"manufacturing", title:"Finish HT/VT (SP)" },
   { date:"2026-09-25", cat:"simulation",    title:"DBF Optimizer" },
   { date:"2026-09-25", cat:"aero",          title:"Summer Plane Payload Design" },
+  { date:"2026-09-26", cat:"manufacturing", title:"Finish Building Wings (SP)" },
   { date:"2026-09-26", cat:"aero",          title:"DBF XFLR5" },
   { date:"2026-09-26", cat:"structures",    title:"Begin DBF CAD" },
   { date:"2026-09-28", cat:"manufacturing", title:"Resin Infusion Order" },
   { date:"2026-09-29", cat:"avionics",      title:"Servo Installs — Summer Plane" },
-  { date:"2026-10-07", cat:"aero",          title:"Prelim. Sensor Aerodynamics & Fin Design" },
   { date:"2026-09-30", cat:"everyone",      title:"SAE Lottery Closes" },
 
   // ---- October ----
-  { date:"2026-10-07", cat:"propulsion",      title:"Test Motor Config." },
-  { date:"2026-10-21", cat:"propulsion",      title:"Order DBF Motor(s)" },
-   { date:"2026-10-06", cat:"simulation",    title:"SAE Optimizer Script Finished" },
-  { date:"2026-10-03", cat:"propulsion",      title:"Fix Cage Wiring"},
-  { date:"2026-10-18", cat:"everyone",      title:"Test Flight" },
-  { date:"2026-10-12", cat:"manufacturing", title:"Begin Resin Infusion Practice" },
-  { date:"2026-10-10", cat:"structures",    title:"Begin SAE CAD" },
-  { date:"2026-10-12", cat:"manufacturing", title:"Fuselage Material Selection" },
-  { date:"2026-10-14", cat:"structures",    title:"Trade Studies Tables" },
-  { date:"2026-10-09", cat:"aero",      title:"Order materials for DBF payload(s)" },
+  { date:"2026-10-03", cat:"everyone",      title:"No GBM" },
+  { date:"2026-10-07", cat:"aero",          title:"Prelim. Sensor Aerodynamics & Fin Design" },
+  { date:"2026-10-09", cat:"simulation",    title:"SAE Optimizer Script Finished" },
+  { date:"2026-10-09", cat:"aero",          title:"Order materials for DBF payload(s)" },
   { date:"2026-10-09", cat:"aero",          title:"SAE XFLR5" },
   { date:"2026-10-09", cat:"avionics",      title:"Servo Wiring Design" },
-
-  { date:"2026-10-03", cat:"everyone",    title:"No GBM" },
-  { date:"2026-10-10", cat:"structures",    title:"DBF CAD Finished" },
+  { date:"2026-10-10", cat:"propulsion",    title:"Test Motor Config." },
+  { date:"2026-10-10", cat:"propulsion",    title:"Fix Cage Wiring" },
+  { date:"2026-10-10", cat:"structures",    title:"Begin SAE CAD" },
+  { date:"2026-10-10", cat:"aero",          title:"Sensor Aerodynamics Testing by Car" },
+  { date:"2026-10-10", cat:"structures",    title:"Prelim. DBF CAD Finished" },
+  { date:"2026-10-12", cat:"manufacturing", title:"Begin Resin Infusion Practice" },
+  { date:"2026-10-12", cat:"manufacturing", title:"Fuselage Material Selection" },
   { date:"2026-10-12", cat:"simulation",    title:"MATLAB Drag Article Script Finished" },
-  { date:"2026-10-12", cat:"manufacturing",    title:"Door Design" },
-  { date:"2026-10-13", cat:"simulation",    title:"Sensitivity Graph" },
-  { date:"2026-10-14", cat:"aero",          title:"Prelim. Servo Deployment Mechanism (CAD)" },
+  { date:"2026-10-12", cat:"manufacturing", title:"Door Design" },
+  { date:"2026-10-13", cat:"simulation",    title:"DBF Sensitivity Graph" },
+  { date:"2026-10-14", cat:"structures",    title:"Trade Studies Tables" },
+  { date:"2026-10-14", cat:"aero",          title:"Prelim. Sensor Deployment Mechanism (CAD)" },
+  { date:"2026-10-14", cat:"avionics",      title:"Pilot Visit" },
+  { date:"2026-10-15", cat:"aero",          title:"Sensor, Sensor Container, and Simulator (CAD) for Proposal" },
   { date:"2026-10-16", cat:"everyone",      title:"DBF Proposal Portal Opens" },
-  { date:"2026-10-15", cat:"manufacturing",      title:"Start DBF Plane (Mold prep)" },
-  { date:"2026-10-16", cat:"aero",      title:"DBF CFD" },
+  { date:"2026-10-16", cat:"aero",          title:"DBF CFD" },
   { date:"2026-10-16", cat:"structures",    title:"SAE Pylon Design" },
-  { date:"2026-10-16", cat:"aero",      title:"Begin Servo [Missile] Machining" },
+  { date:"2026-10-16", cat:"aero",          title:"Begin Servo [Missile] Machining" },
+  { date:"2026-10-17", cat:"manufacturing", title:"Start DBF Plane (Mold prep)" },
   { date:"2026-10-17", cat:"structures",    title:"Test STAND Built" },
   { date:"2026-10-17", cat:"avionics",      title:"Slotted Flaps Design Considerations" },
+  { date:"2026-10-18", cat:"everyone",      title:"Test Flight" },
   { date:"2026-10-19", cat:"structures",    title:"SAE Plane CAD — Prelim. Design Finished" },
-  { date:"2026-10-20", cat:"structures",    title:"DBF CAD Rendering" },
+  { date:"2026-10-20", cat:"structures",    title:"Final DBF CAD Finished" },
+  { date:"2026-10-21", cat:"propulsion",    title:"Order DBF Motor(s)" },
   { date:"2026-10-22", cat:"everyone",      title:"Front Landing Gear Redesign" },
-  { date:"2026-10-26", cat:"manufacturing",    title:"Container Simulator Design" },
+  { date:"2026-10-23", cat:"aero",          title:"Sensor Container Design" },
+  { date:"2026-10-24", cat:"avionics",      title:"Winch Motor/Servo Recommendation" },
+  { date:"2026-10-24", cat:"structures",    title:"Sensor Mechanism Support Design" },
+  { date:"2026-10-26", cat:"manufacturing", title:"Container Simulator Design" },
   { date:"2026-10-29", cat:"everyone",      title:"Greek Bday" },
-  { date:"2026-10-30", cat:"aero",          title:"Winglets" },
-  { date:"2026-10-30", cat:"manufacturing",    title:"Start SAE Plane" },
+  { date:"2026-10-30", cat:"aero",          title:"DBF (& SAE) Winglet Design" },
+  { date:"2026-10-30", cat:"manufacturing", title:"Start SAE Plane" },
   { date:"2026-10-31", cat:"everyone",      title:"Halloween" },
   { date:"2026-10-31", cat:"everyone",      title:"DBF Proposal Due" },
-  { date:"2026-10-24", cat:"avionics",      title:"Winch Motor/Servo Recommendation" },
-  { date:"2026-10-14", cat:"avionics",      title:"Pilot Visit" },
-  { date:"2026-10-23", cat:"aero",      title:"Sensor Container Design" },
 
-
-  // -- November --
-    { date:"2026-11-07", cat:"everyone",      title:"Design Team Formal" },
-    { date:"2026-11-07", cat:"aero",      title:"SAE CFD" },
-    { date:"2026-11-06", cat:"aero",      title:"SLU Windtunnel Testing" },
+  // ---- November ----
+  { date:"2026-11-06", cat:"aero",          title:"SLU Windtunnel Testing" },
+  { date:"2026-11-07", cat:"everyone",      title:"Design Team Formal" },
+  { date:"2026-11-07", cat:"aero",          title:"SAE CFD" },
+  { date:"2026-11-15", cat:"everyone",      title:"DBF Plane Test Flight" },
+  { date:"2026-11-25", cat:"everyone",      title:"Thanksgiving Break" },
+  { date:"2026-11-26", cat:"everyone",      title:"Thanksgiving Break" },
+  { date:"2026-11-27", cat:"everyone",      title:"Thanksgiving Break" },
+  { date:"2026-11-28", cat:"everyone",      title:"Thanksgiving Break" },
+  { date:"2026-11-29", cat:"everyone",      title:"Thanksgiving Break" },
 ];
 const CATEGORIES = [
   { key:"aero",          label:"Aero & Payload" },
@@ -426,6 +432,17 @@ const MONTHS = [
 ];
 
 const WEEKDAY_LABELS = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+
+// Open on the current month; clamp to the first/last tab when outside the season.
+function initialMonthIdx(){
+  const now = new Date();
+  const key = now.getFullYear()*12 + now.getMonth();
+  const keys = MONTHS.map(m => m.year*12 + m.month);
+  if(key <= keys[0]) return 0;
+  if(key >= keys[keys.length-1]) return keys.length-1;
+  return keys.indexOf(key);
+}
+const ACTIVE_IDX = initialMonthIdx();
 
 function buildLegend(){
   const el = document.getElementById("legend");
@@ -469,7 +486,7 @@ function buildMonth(m, idx){
   }
 
   return `
-    <div class="month${idx===0? " active":""}" id="month-${idx}">
+    <div class="month${idx===ACTIVE_IDX? " active":""}" id="month-${idx}">
       <div class="weekdays">${WEEKDAY_LABELS.map(w=>`<div>${w}</div>`).join("")}</div>
       <div class="grid">${cells}</div>
     </div>
@@ -479,7 +496,7 @@ function buildMonth(m, idx){
 function buildTabs(){
   const el = document.getElementById("tabs");
   el.innerHTML = MONTHS.map((m,i)=>
-    `<div class="tab${i===0? " active":""}" data-idx="${i}">${m.name.toUpperCase()} 2026</div>`
+    `<div class="tab${i===ACTIVE_IDX? " active":""}" data-idx="${i}">${m.name.toUpperCase()} 2026</div>`
   ).join("");
 
   el.querySelectorAll(".tab").forEach(tab=>{
