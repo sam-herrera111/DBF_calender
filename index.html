@@ -332,10 +332,12 @@
 <script>
 /* ============================================================
    EDIT ME: add/remove/change events here.
-   date  -> "YYYY-MM-DD"
-   cat   -> one of: aero, avionics, propulsion, manufacturing,
-                    structures, simulation, admin, everyone
-   title -> event text shown on the calendar
+   date    -> "YYYY-MM-DD"
+   endDate -> optional "YYYY-MM-DD"; if set, event spans date..endDate
+              (shows on every day in that range, e.g. for breaks)
+   cat     -> one of: aero, avionics, propulsion, manufacturing,
+                      structures, simulation, admin, everyone
+   title   -> event text shown on the calendar
    ============================================================ */
 const EVENTS = [
   // ---- September ----
@@ -419,31 +421,13 @@ const EVENTS = [
   { date:"2026-11-18", cat:"propulsion",    title:"SAE Static Motor Test" },
   { date:"2026-11-20", cat:"avionics",      title:"Sensor LED Lighting Test" },
   { date:"2026-11-21", cat:"everyone",      title:"Full GM Team Demonstration" },
-  { date:"2026-11-25", cat:"everyone",      title:"Thanksgiving Break" },
-  { date:"2026-11-26", cat:"everyone",      title:"Thanksgiving Break" },
-  { date:"2026-11-27", cat:"everyone",      title:"Thanksgiving Break" },
-  { date:"2026-11-28", cat:"everyone",      title:"Thanksgiving Break" },
-  { date:"2026-11-29", cat:"everyone",      title:"Thanksgiving Break" },
+  { date:"2026-11-25", endDate:"2026-11-29", cat:"everyone", title:"Thanksgiving Break" },
 
   // ---- December ----
   // Add December events here, e.g.:
   // { date:"2026-12-04", cat:"aero", title:"Example Task" },
 
-  { date:"2026-12-17", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-18", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-19", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-20", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-21", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-22", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-23", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-24", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-25", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-26", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-27", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-28", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-29", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-30", cat:"everyone",      title:"Winter Break" },
-  { date:"2026-12-31", cat:"everyone",      title:"Winter Break" },
+  { date:"2026-12-17", endDate:"2026-12-31", cat:"everyone", title:"Winter Break" },
 ];
 const CATEGORIES = [
   { key:"aero",          label:"Aero & Payload" },
@@ -487,7 +471,7 @@ function buildLegend(){
 
 function eventsFor(year, month, day){
   const iso = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-  return EVENTS.filter(e => e.date === iso);
+  return EVENTS.filter(e => iso >= e.date && iso <= (e.endDate || e.date));
 }
 
 function buildMonth(m, idx){
