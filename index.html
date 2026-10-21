@@ -230,6 +230,32 @@
     font-weight: 500;
     border-left: 3px solid rgba(0,0,0,0.25);
   }
+  /* multi-day events show as a spanning .banner in grid view; their
+     per-day chip is only used in the narrow/agenda view below */
+  .grid .event.multiday{ display: none; }
+
+  /* reserves the vertical slot the overlaid .banner occupies, so this
+     cell's own day number/events don't get drawn underneath it */
+  .banner-spacer{ height: 18px; flex: 0 0 auto; }
+
+  .banner{
+    align-self: start;
+    margin-top: 24px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 600;
+    line-height: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    z-index: 2;
+  }
+  .banner.banner-start{ border-top-left-radius: 3px; border-bottom-left-radius: 3px; margin-left: 1px; }
+  .banner.banner-end{ border-top-right-radius: 3px; border-bottom-right-radius: 3px; margin-right: 1px; }
 
   .cat-aero{ background: var(--c-aero); }
   .cat-avionics{ background: var(--c-avionics); }
@@ -301,6 +327,11 @@
     }
     .cell.today .daynum{ padding: 2px 8px; width: auto; height: auto; border-radius: 4px; }
     .event{ font-size: 12px; padding: 4px 8px 4px 9px; }
+
+    /* no room to draw a spanning bar in the single-column agenda view —
+       fall back to a normal chip on each day of the range instead */
+    .banner{ display: none; }
+    .grid .event.multiday{ display: block; }
   }
 </style>
 </head>
@@ -481,30 +512,77 @@ function buildMonth(m, idx){
   const today = new Date();
   const isCurrentMonth = today.getFullYear()===year && today.getMonth()===month;
 
+  // Multi-day events (date !== endDate) render as a single spanning bar
+  // across the grid instead of a chip repeated in every cell.
+  const monthStart = new Date(year, month, 1);
+  const monthEnd = new Date(year, month, daysInMonth);
+  const banners = [];
+  const bannerDays = new Set();
+  EVENTS.filter(e => e.endDate && e.endDate !== e.date).forEach(e=>{
+    const s = new Date(e.date+"T00:00:00");
+    const en = new Date(e.endDate+"T00:00:00");
+    if(en < monthStart || s > monthEnd) return;
+    const clipStart = s < monthStart ? 1 : s.getDate();
+    const clipEnd = en > monthEnd ? daysInMonth : en.getDate();
+    for(let d=clipStart; d<=clipEnd; d++) bannerDays.add(d);
+    const startCell = firstDay + (clipStart-1);
+    const endCell = firstDay + (clipEnd-1);
+    for(let w=Math.floor(startCell/7); w<=Math.floor(endCell/7); w++){
+      const segStart = Math.max(startCell, w*7);
+      const segEnd = Math.min(endCell, w*7+6);
+      banners.push({
+        row: w+1,
+        colStart: (segStart%7)+1,
+        span: segEnd-segStart+1,
+        cat: e.cat,
+        title: e.title,
+        isStart: segStart===startCell,
+        isEnd: segEnd===endCell,
+      });
+    }
+  });
+
+  // Every cell (including blanks) gets an explicit grid-row/grid-column.
+  // This is required once .banner elements also use explicit placement —
+  // CSS Grid auto-placement skips cells already explicitly claimed, which
+  // would otherwise shove auto-placed day cells into the wrong week row.
+  const gridPos = i => `grid-row:${Math.floor(i/7)+1}; grid-column:${(i%7)+1};`;
+
   let cells = "";
   for(let i=0;i<firstDay;i++){
-    cells += `<div class="cell blank"></div>`;
+    cells += `<div class="cell blank" style="${gridPos(i)}"></div>`;
   }
   for(let d=1; d<=daysInMonth; d++){
+    const cellIndex = firstDay + d - 1;
     const evs = eventsFor(year, month, d);
     const isToday = isCurrentMonth && today.getDate()===d;
     const dow = new Date(year, month, d).getDay();
-    let evHtml = evs.map(e=>`<div class="event cat-${e.cat}">${e.title}</div>`).join("");
+    const hasBanner = bannerDays.has(d);
+    const spacer = hasBanner ? `<div class="banner-spacer"></div>` : "";
+    let evHtml = evs.map(e=>{
+      const multiday = e.endDate && e.endDate !== e.date;
+      return `<div class="event cat-${e.cat}${multiday? " multiday":""}">${e.title}</div>`;
+    }).join("");
     const classes = ["cell"];
     if(isToday) classes.push("today");
     if(evs.length) classes.push("has-events");
-    cells += `<div class="${classes.join(" ")}"><div class="daynum"><span class="dow">${WEEKDAY_LABELS[dow]}</span>${d}</div>${evHtml}</div>`;
+    if(hasBanner) classes.push("has-banner");
+    cells += `<div class="${classes.join(" ")}" style="${gridPos(cellIndex)}"><div class="daynum"><span class="dow">${WEEKDAY_LABELS[dow]}</span>${d}</div>${spacer}${evHtml}</div>`;
   }
   const totalCells = firstDay + daysInMonth;
   const trailing = (7 - (totalCells % 7)) % 7;
   for(let i=0;i<trailing;i++){
-    cells += `<div class="cell blank"></div>`;
+    cells += `<div class="cell blank" style="${gridPos(totalCells+i)}"></div>`;
   }
+
+  const bannerHtml = banners.map(b=>
+    `<div class="banner cat-${b.cat}${b.isStart? " banner-start":""}${b.isEnd? " banner-end":""}" style="grid-row:${b.row}; grid-column:${b.colStart} / span ${b.span};">${b.title}</div>`
+  ).join("");
 
   return `
     <div class="month${idx===ACTIVE_IDX? " active":""}" id="month-${idx}">
       <div class="weekdays">${WEEKDAY_LABELS.map(w=>`<div>${w}</div>`).join("")}</div>
-      <div class="grid">${cells}</div>
+      <div class="grid">${cells}${bannerHtml}</div>
     </div>
   `;
 }
