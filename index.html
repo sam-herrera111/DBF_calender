@@ -79,6 +79,23 @@
     color: var(--ink-soft);
     margin-top: 8px;
   }
+  .new-note{
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+  .new-swatch{
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    border-radius: 2px;
+    background: repeating-linear-gradient(45deg, #C0392B 0 4px, #fff 4px 8px);
+    border: 1px solid rgba(0,0,0,0.15);
+  }
   .titleblock .meta{
     padding: 22px 24px;
     display: flex;
@@ -244,6 +261,20 @@
      per-day chip is only used in the narrow/agenda view below */
   .grid .event.multiday{ display: none; }
 
+  /* flagged the first time a visitor sees a newly-added event; cleared
+     once that event has been recorded as seen (see SEEN_EVENTS in JS) */
+  .event.is-new{
+    border: 3px solid transparent;
+    border-image: repeating-linear-gradient(45deg, #C0392B 0 6px, #fff 6px 12px) 3;
+  }
+  .banner.is-new{
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-image: repeating-linear-gradient(45deg, #C0392B 0 6px, #fff 6px 12px) 3;
+  }
+  .banner.is-new.banner-start{ border-left: 3px solid transparent; }
+  .banner.is-new.banner-end{ border-right: 3px solid transparent; }
+
   /* reserves the vertical slot the overlaid .banner occupies, so this
      cell's own day number/events don't get drawn underneath it */
   .banner-spacer{ height: 18px; flex: 0 0 auto; }
@@ -354,6 +385,7 @@
       <div class="team">Design/Build/Fly</div>
       <h1>Project Calendar</h1>
       <div class="sub">Season schedule — subsystem meetings, builds, reviews &amp; deadlines</div>
+      <div class="new-note"><span class="new-swatch"></span> red/white border = new event since your last visit</div>
     </div>
     <div class="meta">
       <div><span>PERIOD</span><b>SEP – DEC 2026</b></div>
@@ -535,6 +567,25 @@ try{
   JSON.parse(localStorage.getItem("hiddenCats") || "[]").forEach(c => HIDDEN_CATS.add(c));
 }catch(e){}
 
+// Flag events added since the visitor's last visit with a red/white border.
+// Keyed on date+endDate+cat+title, since events have no explicit id — editing
+// an existing event's text/date will make it register as "new" again, which
+// is reasonable (it's meaningfully different from what they last saw).
+function eventKey(e){
+  return [e.date, e.endDate || "", e.cat, e.title].join("|");
+}
+const NEW_KEYS = new Set();
+try{
+  const seenBefore = localStorage.getItem("seenEvents");
+  if(seenBefore !== null){
+    const seen = new Set(JSON.parse(seenBefore));
+    EVENTS.forEach(e => { if(!seen.has(eventKey(e))) NEW_KEYS.add(eventKey(e)); });
+  }
+  // First-ever visit: no baseline to diff against, so nothing is "new" —
+  // just record everything currently on the calendar as the baseline.
+  localStorage.setItem("seenEvents", JSON.stringify(EVENTS.map(eventKey)));
+}catch(e){}
+
 function toggleCategory(cat){
   if(HIDDEN_CATS.has(cat)) HIDDEN_CATS.delete(cat);
   else HIDDEN_CATS.add(cat);
@@ -598,6 +649,7 @@ function buildMonth(m, idx){
         title: e.title,
         isStart: segStart===startCell,
         isEnd: segEnd===endCell,
+        isNew: NEW_KEYS.has(eventKey(e)),
       });
     }
   });
@@ -621,7 +673,8 @@ function buildMonth(m, idx){
     const spacer = hasBanner ? `<div class="banner-spacer"></div>` : "";
     let evHtml = evs.map(e=>{
       const multiday = e.endDate && e.endDate !== e.date;
-      return `<div class="event cat-${e.cat}${multiday? " multiday":""}">${e.title}</div>`;
+      const isNew = NEW_KEYS.has(eventKey(e));
+      return `<div class="event cat-${e.cat}${multiday? " multiday":""}${isNew? " is-new":""}">${e.title}</div>`;
     }).join("");
     const classes = ["cell"];
     if(isToday) classes.push("today");
@@ -636,7 +689,7 @@ function buildMonth(m, idx){
   }
 
   const bannerHtml = banners.map(b=>
-    `<div class="banner cat-${b.cat}${b.isStart? " banner-start":""}${b.isEnd? " banner-end":""}" style="grid-row:${b.row}; grid-column:${b.colStart} / span ${b.span};">${b.title}</div>`
+    `<div class="banner cat-${b.cat}${b.isStart? " banner-start":""}${b.isEnd? " banner-end":""}${b.isNew? " is-new":""}" style="grid-row:${b.row}; grid-column:${b.colStart} / span ${b.span};">${b.title}</div>`
   ).join("");
 
   return `
