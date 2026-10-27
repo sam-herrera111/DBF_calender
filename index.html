@@ -124,13 +124,23 @@
     gap: 7px;
     font-size: 13px;
     font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    padding: 3px 6px 3px 3px;
+    border-radius: 4px;
+    transition: opacity 0.15s ease, background 0.15s ease;
   }
+  .legend .chip:hover{ background: var(--paper); }
+  .legend .chip:focus-visible{ outline: 2px solid var(--steel); outline-offset: 1px; }
+  .legend .chip.chip-off{ opacity: 0.4; }
+  .legend .chip.chip-off .swatch{ background: transparent !important; }
   .legend .swatch{
     width: 12px;
     height: 12px;
     border-radius: 3px;
     display: inline-block;
     border: 1px solid rgba(0,0,0,0.15);
+    transition: background 0.15s ease;
   }
 
   /* ---- Tabs ---- */
@@ -517,19 +527,42 @@ function initialMonthIdx(){
   return keys.indexOf(key);
 }
 const ACTIVE_IDX = initialMonthIdx();
+let currentIdx = ACTIVE_IDX;
+
+// Categories toggled off via the legend; persisted so the choice sticks on reload.
+const HIDDEN_CATS = new Set();
+try{
+  JSON.parse(localStorage.getItem("hiddenCats") || "[]").forEach(c => HIDDEN_CATS.add(c));
+}catch(e){}
+
+function toggleCategory(cat){
+  if(HIDDEN_CATS.has(cat)) HIDDEN_CATS.delete(cat);
+  else HIDDEN_CATS.add(cat);
+  try{ localStorage.setItem("hiddenCats", JSON.stringify([...HIDDEN_CATS])); }catch(e){}
+  renderMonths();
+  document.querySelectorAll(`.legend .chip[data-cat="${cat}"]`)
+    .forEach(chip => chip.classList.toggle("chip-off", HIDDEN_CATS.has(cat)));
+}
 
 function buildLegend(){
   const el = document.getElementById("legend");
-  let html = `<span class="label">CATEGORY KEY</span>`;
+  let html = `<span class="label">CATEGORY KEY — click to show/hide</span>`;
   CATEGORIES.forEach(c=>{
-    html += `<span class="chip"><span class="swatch cat-${c.key}"></span>${c.label}</span>`;
+    const off = HIDDEN_CATS.has(c.key) ? " chip-off" : "";
+    html += `<span class="chip${off}" data-cat="${c.key}" role="button" tabindex="0"><span class="swatch cat-${c.key}"></span>${c.label}</span>`;
   });
   el.innerHTML = html;
+  el.querySelectorAll(".chip").forEach(chip=>{
+    chip.addEventListener("click", ()=> toggleCategory(chip.dataset.cat));
+    chip.addEventListener("keydown", e=>{
+      if(e.key==="Enter" || e.key===" "){ e.preventDefault(); toggleCategory(chip.dataset.cat); }
+    });
+  });
 }
 
 function eventsFor(year, month, day){
   const iso = `${year}-${String(month+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-  return EVENTS.filter(e => iso >= e.date && iso <= (e.endDate || e.date));
+  return EVENTS.filter(e => iso >= e.date && iso <= (e.endDate || e.date) && !HIDDEN_CATS.has(e.cat));
 }
 
 function buildMonth(m, idx){
@@ -545,7 +578,7 @@ function buildMonth(m, idx){
   const monthEnd = new Date(year, month, daysInMonth);
   const banners = [];
   const bannerDays = new Set();
-  EVENTS.filter(e => e.endDate && e.endDate !== e.date).forEach(e=>{
+  EVENTS.filter(e => e.endDate && e.endDate !== e.date && !HIDDEN_CATS.has(e.cat)).forEach(e=>{
     const s = new Date(e.date+"T00:00:00");
     const en = new Date(e.endDate+"T00:00:00");
     if(en < monthStart || s > monthEnd) return;
@@ -607,7 +640,7 @@ function buildMonth(m, idx){
   ).join("");
 
   return `
-    <div class="month${idx===ACTIVE_IDX? " active":""}" id="month-${idx}">
+    <div class="month${idx===currentIdx? " active":""}" id="month-${idx}">
       <div class="weekdays">${WEEKDAY_LABELS.map(w=>`<div>${w}</div>`).join("")}</div>
       <div class="grid">${cells}${bannerHtml}</div>
     </div>
@@ -617,24 +650,28 @@ function buildMonth(m, idx){
 function buildTabs(){
   const el = document.getElementById("tabs");
   el.innerHTML = MONTHS.map((m,i)=>
-    `<div class="tab${i===ACTIVE_IDX? " active":""}" data-idx="${i}">${m.name.toUpperCase()} 2026</div>`
+    `<div class="tab${i===currentIdx? " active":""}" data-idx="${i}">${m.name.toUpperCase()} 2026</div>`
   ).join("");
 
   el.querySelectorAll(".tab").forEach(tab=>{
     tab.addEventListener("click", ()=>{
-      const idx = tab.dataset.idx;
+      currentIdx = Number(tab.dataset.idx);
       document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
       document.querySelectorAll(".month").forEach(m=>m.classList.remove("active"));
       tab.classList.add("active");
-      document.getElementById(`month-${idx}`).classList.add("active");
+      document.getElementById(`month-${currentIdx}`).classList.add("active");
     });
   });
+}
+
+function renderMonths(){
+  document.getElementById("months").innerHTML = MONTHS.map(buildMonth).join("");
 }
 
 function render(){
   buildLegend();
   buildTabs();
-  document.getElementById("months").innerHTML = MONTHS.map(buildMonth).join("");
+  renderMonths();
 }
 
 render();
