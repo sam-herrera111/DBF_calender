@@ -24,6 +24,7 @@
     --c-simulation: #2E8368;
     --c-admin: #C99A1E;
     --c-everyone: #2A2F33;
+    --c-president: #CC6B1F;
   }
 
   *{ box-sizing: border-box; }
@@ -306,6 +307,7 @@
   .cat-simulation{ background: var(--c-simulation); }
   .cat-admin{ background: var(--c-admin); color:#2B2000; }
   .cat-everyone{ background: var(--c-everyone); }
+  .cat-president{ background: var(--c-president); }
 
   footer{
     text-align: center;
@@ -409,7 +411,7 @@
    endDate -> optional "YYYY-MM-DD"; if set, event spans date..endDate
               (shows on every day in that range, e.g. for breaks)
    cat     -> one of: aero, avionics, propulsion, manufacturing,
-                      structures, simulation, admin, everyone
+                      structures, simulation, admin, everyone, president
    title   -> event text shown on the calendar
    ============================================================ */
 const EVENTS = [
@@ -492,6 +494,7 @@ const EVENTS = [
   { date:"2026-11-04", cat:"propulsion",    title:"Test Flight Data Review" },
   { date:"2026-11-06", cat:"aero",          title:"Wind Tunnel Test Stand" },
   { date:"2026-11-06", cat:"simulation",    title:"Test Flight Data Review" },
+  { date:"2026-11-06", cat:"simulation",    title:"Performance Prediction Script" },
   { date:"2026-11-06", cat:"aero",          title:"Lift/Drag/Moment SLU Windtunnel Testing" },
   { date:"2026-11-07", cat:"aero",          title:"DBF (& SAE) Winglet Design" },
   { date:"2026-11-07", cat:"structures",    title:"Drop Test Stand Mechanism Finalized" },
@@ -538,6 +541,7 @@ const CATEGORIES = [
   { key:"simulation",     label:"Simulation Development" },
   { key:"admin",          label:"Administrative" },
   { key:"everyone",       label:"Everyone" },
+  { key:"president",      label:"Technical President" },
 ];
 
 const MONTHS = [
