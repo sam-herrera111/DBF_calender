@@ -208,6 +208,47 @@
   .month{ display: none; }
   .month.active{ display: block; }
 
+  .month-banner{
+    height: 150px;
+    border: 1.5px solid var(--ink);
+    background-size: cover;
+    background-color: var(--panel);
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+    overflow: hidden;
+  }
+  .month-banner.banner-label-top{ align-items: flex-start; }
+  .month-banner-label{
+    position: relative;
+    z-index: 1;
+    font-weight: 700;
+    font-size: clamp(18px, 3vw, 24px);
+    letter-spacing: 0.02em;
+    padding: 12px 20px;
+  }
+  /* illustrated banners (Sep/Oct/Nov): blank area is light, so plain dark
+     text reads fine with no overlay needed */
+  .month-banner.banner-dark .month-banner-label{ color: var(--ink); }
+  /* photo banners (Dec): darken just enough behind the text for contrast
+     against sky/scenery, white text */
+  .month-banner.banner-light .month-banner-label{
+    color: #fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+  .month-banner.banner-light.banner-label-top::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 55%);
+  }
+  .month-banner.banner-light.banner-label-bottom::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 55%);
+  }
+
   .weekdays{
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -334,6 +375,7 @@
 
   @media (max-width: 900px){
     .hero-thumb{ width: 190px; height: 115px; }
+    .month-banner{ height: 100px; }
     .cell{ min-height: 96px; }
     .event{ font-size: 10.5px; }
   }
@@ -565,10 +607,13 @@ const CATEGORIES = [
 ];
 
 const MONTHS = [
-  { year:2026, month:8, name:"September", emoji:"☀️" }, // month is 0-indexed
-  { year:2026, month:9, name:"October", emoji:"🎃" },
-  { year:2026, month:10, name:"November", emoji:"🍂" },
-  { year:2026, month:11, name:"December", emoji:"❄️" },
+  // banner images are illustrated strips with art along one edge and blank
+  // space for the label — imgPos picks which edge to show, labelPos puts
+  // the text in the blank area, labelTheme picks readable text color/treatment
+  { year:2026, month:8, name:"September", emoji:"☀️", banner:"september banner.jpg", imgPos:"bottom", labelPos:"top",    labelTheme:"dark"  }, // month is 0-indexed
+  { year:2026, month:9, name:"October",   emoji:"🎃", banner:"october banner.jpg",   imgPos:"bottom", labelPos:"top",    labelTheme:"dark"  },
+  { year:2026, month:10, name:"November", emoji:"🍂", banner:"november banner.jpg",  imgPos:"top",    labelPos:"bottom", labelTheme:"dark"  },
+  { year:2026, month:11, name:"December", emoji:"❄️", banner:"december banner.jpg",  imgPos:"center", labelPos:"top",    labelTheme:"light" },
 ];
 
 const WEEKDAY_LABELS = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
@@ -641,7 +686,7 @@ function eventsFor(year, month, day){
 }
 
 function buildMonth(m, idx){
-  const { year, month, name } = m;
+  const { year, month, name, banner, imgPos, labelPos, labelTheme } = m;
   const firstDay = new Date(year, month, 1).getDay(); // 0=Sun
   const daysInMonth = new Date(year, month+1, 0).getDate();
   const today = new Date();
@@ -716,8 +761,13 @@ function buildMonth(m, idx){
     `<div class="banner cat-${b.cat}${b.isStart? " banner-start":""}${b.isEnd? " banner-end":""}${b.isNew? " is-new":""}" style="grid-row:${b.row}; grid-column:${b.colStart} / span ${b.span};">${b.title}</div>`
   ).join("");
 
+  const monthBannerHtml = banner
+    ? `<div class="month-banner banner-${labelTheme} banner-label-${labelPos}" style="background-image:url('${banner}'); background-position: ${imgPos};"><span class="month-banner-label">${name.toUpperCase()} ${year}</span></div>`
+    : "";
+
   return `
     <div class="month${idx===currentIdx? " active":""}" id="month-${idx}">
+      ${monthBannerHtml}
       <div class="weekdays">${WEEKDAY_LABELS.map(w=>`<div>${w}</div>`).join("")}</div>
       <div class="grid">${cells}${bannerHtml}</div>
     </div>
