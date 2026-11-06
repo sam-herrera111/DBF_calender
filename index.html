@@ -62,11 +62,17 @@
     border-right: 1.5px solid var(--ink);
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
     gap: 16px 20px;
   }
-  .main-text{ min-width: 0; }
+  .main-text{ flex: 1 1 0%; min-width: 0; }
+  .dbf-logo{
+    width: 72px;
+    height: 72px;
+    flex: 0 0 auto;
+    object-fit: contain;
+  }
   .titleblock .team{
     font-size: 13px;
     letter-spacing: 0.04em;
@@ -117,6 +123,7 @@
     width: 260px;
     height: 150px;
     flex: 0 0 auto;
+    margin-left: auto;
     object-fit: cover;
     object-position: center 60%;
     border-radius: 4px;
@@ -429,6 +436,7 @@
 
   <div class="titleblock">
     <div class="main">
+      <img class="dbf-logo" src="DBF logo.png" alt="WashU DBF27 logo">
       <div class="main-text">
         <div class="team">Design/Build/Fly</div>
         <h1>Project Calendar</h1>
@@ -597,8 +605,8 @@ const MONTHS = [
   // space for the label — imgPos picks which edge to show, labelPos puts
   // the text in the blank area; the label itself is a bordered badge, so
   // it stays legible regardless of what's behind it
-  { year:2026, month:8, name:"September", emoji:"☀️", banner:"september banner.jpg", imgPos:"bottom", labelPos:"top" }, // month is 0-indexed
-  { year:2026, month:9, name:"October",   emoji:"🎃", banner:"october banner.jpg",   imgPos:"bottom", labelPos:"top" },
+  { year:2026, month:8, name:"September", emoji:"☀️", banner:"september banner.jpg", imgPos:"center", labelPos:"top" }, // month is 0-indexed
+  { year:2026, month:9, name:"October",   emoji:"🎃", banner:"october banner.jpg",   imgPos:"center", labelPos:"top" },
   { year:2026, month:10, name:"November", emoji:"🍂", banner:"november banner.jpg",  imgPos:"top",    labelPos:"bottom" },
   { year:2026, month:11, name:"December", emoji:"❄️", banner:"december banner.jpg",  imgPos:"center", labelPos:"top" },
 ];
